@@ -19,7 +19,7 @@ public class TaskDAO implements Task {
     private String description;
     private Priority priority;
     private LocalDate dueToDate;
-    private boolean isCompleted;
+    private Boolean isCompleted;
 
     /*
     *   Creates Task and assigns an id with UUID.toString()
