@@ -25,7 +25,7 @@ public class TaskTests {
 
         assertAll(() -> {
             assertNotNull(task);
-            assertNotNull(task.getId());
+            assertNull(task.getId());
             assertEquals(happyTitle, task.getTitle());
             assertEquals(happyDescription, task.getDescription());
             assertEquals(happyHighPriority, task.getPriority());
@@ -42,7 +42,7 @@ public class TaskTests {
 
         assertAll(() -> {
             assertNotNull(task);
-            assertNotNull(task.getId());
+            assertNull(task.getId());
             assertEquals(happyTitle, task.getTitle());
             assertEquals(happyDescription, task.getDescription());
             assertEquals(defaultPriority, task.getPriority());

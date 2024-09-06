@@ -1,9 +1,12 @@
 package com.example.demo.domain;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -36,30 +39,33 @@ public class TaskRepositoryTests {
     @Autowired
     private TaskRepository taskRepository;
 
+    @BeforeAll
+    static void setup() {
+        postgres.start();
+    }
+
+    @AfterAll
+    static void close() {
+        postgres.stop();
+    }
+
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url",postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.datasource.initialization-mode", () -> "always" );
-    }
-
-    @Test
-    void connect() {
-        assertAll(() -> {
-            assertTrue(postgres.isCreated());
-            assertTrue(postgres.isRunning());
-        });
+        registry.add("spring.sql.init.mode", () -> "always" );
+        registry.add("testcontainers.reuse.enable", () -> "false");
     }
 
     @Test
     void testDatabaseConnection() throws Exception {
-        String schemaSql = Files.readString(Path.of("src/test/resources/schema.sql"));
-        try (var connection = postgres.createConnection("")) {
-            try (var statement = connection.createStatement()) {
-                statement.execute(schemaSql);
-            }
-        }
+        var connection = postgres.createConnection("");
+        assertAll(() -> {
+            assertTrue(postgres.isCreated());
+            assertTrue(postgres.isRunning());
+            assertTrue(postgres.createConnection("").isValid(1000));
+        });
     }
 
     @Test
@@ -70,5 +76,21 @@ public class TaskRepositoryTests {
         } catch (Exception e) {
             fail("Table 'task' does not exist or is not initialized properly.");
         }
+    }
+
+    @Test
+    void saveTaskToDb() {
+        Task task = new Task(happyTitle, happyDescription, happyDueToDate);
+        taskRepository.save(task);
+
+        Task taskFromDb = taskRepository.findAll().getFirst();
+
+        assertAll(() -> {
+            assertNotNull(taskFromDb);
+            assertEquals(happyTitle, taskFromDb.getTitle());
+            assertEquals(happyDescription, taskFromDb.getDescription());
+            assertEquals(happyDueToDate, taskFromDb.getDueToDate());
+            assertFalse(taskFromDb.getIsCompleted());
+        });
     }
 }

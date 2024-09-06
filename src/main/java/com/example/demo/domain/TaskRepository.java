@@ -5,10 +5,8 @@ import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface TaskRepository extends ListCrudRepository<Task, String> {
-    @Override
-    @Query("SELECT t * FROM task as t WHERE t.id = ? LIMIT 1")
-    Optional<Task> findById(String s);
+public interface TaskRepository extends ListCrudRepository<Task, Long> {
 }

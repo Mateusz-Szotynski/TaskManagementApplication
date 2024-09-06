@@ -1,16 +1,13 @@
-CREATE TABLE IF NOT EXISTS priority(
-    id SMALLINT NOT NULL PRIMARY KEY,
-    name TEXT NOT NULL
-);
-
+-- task table
 CREATE TABLE IF NOT EXISTS task(
-    id TEXT NOT NULL PRIMARY KEY,
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
-    priority SMALLINT NOT NULL,
+    priority TEXT NOT NULL,
     due_to_date TIMESTAMP WITH TIME ZONE NOT NULL,
     is_completed BOOLEAN NOT NULL,
-    CONSTRAINT fk_priority
-        FOREIGN KEY (priority)
-        REFERENCES priority(id)
+    CONSTRAINT chck_priority CHECK ( priority LIKE 'LOW' OR
+        priority LIKE 'MEDIUM' OR
+        priority LIKE 'HIGH' OR
+        priority LIKE 'CRITICAL')
 );
