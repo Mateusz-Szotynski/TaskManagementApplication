@@ -81,7 +81,7 @@ public class TaskRepositoryTests {
     }
 
     @Test
-    @DisplayName("Tests saving Task to database")
+    @DisplayName("Saves Task to database")
     void saveTaskToDb() {
         Task task = new Task(happyTitle, happyDescription, happyDueToDate);
         taskRepository.save(task);
@@ -111,6 +111,18 @@ public class TaskRepositoryTests {
             assertFalse(retrievedTasksList.isEmpty());
             assertEquals(2, retrievedTasksList.size());
             assertTrue(retrievedTasksList.stream().allMatch((e) -> e.getTitle().contains(happyTitle)));
+        });
+    }
+
+    @Test
+    @DisplayName("Returns empty list by trying to retrieve tasks by title")
+    void retrieveEmptyListTasksByTitle() {
+
+        List<Task> tasksDb = taskRepository.findByTitle("title2");
+
+        assertAll(() -> {
+            assertTrue(tasksDb.isEmpty());
+            assertEquals(0, tasksDb.size());
         });
     }
 
@@ -145,6 +157,18 @@ public class TaskRepositoryTests {
             assertFalse(tasksFromDb.isEmpty());
             assertEquals(2, tasksFromDb.size());
             assertTrue(tasksFromDb.stream().allMatch((e) -> e.getPriority().equals(Priority.LOW)));
+        });
+    }
+
+    @Test
+    @DisplayName("Returns empty list by trying to retrieve tasks by priority")
+    void retrieveEmptyListTasksByPriority() {
+
+        List<Task> taskFromDb = taskRepository.findByPriority(Priority.CRITICAL);
+
+        assertAll(() -> {
+            assertTrue(taskFromDb.isEmpty());
+            assertEquals(0, taskFromDb.size());
         });
     }
 }
