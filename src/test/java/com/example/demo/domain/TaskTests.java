@@ -2,14 +2,13 @@ package com.example.demo.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class TaskDAOTests {
+public class TaskTests {
 
     private final String happyTitle = "testTitle";
     private final String happyDescription = "testDescription";
@@ -21,62 +20,62 @@ public class TaskDAOTests {
     @Test
     @DisplayName("Creates TaskDAO with all parameters")
     void createTaskDAOWithAllParameters() {
-        TaskDAO taskDAO = new TaskDAO(happyTitle, happyDescription, happyHighPriority,
+        Task task = new Task(happyTitle, happyDescription, happyHighPriority,
                 happyDueToDate);
 
         assertAll(() -> {
-            assertNotNull(taskDAO);
-            assertNotNull(taskDAO.getId());
-            assertEquals(happyTitle, taskDAO.getTitle());
-            assertEquals(happyDescription, taskDAO.getDescription());
-            assertEquals(happyHighPriority, taskDAO.getPriority());
-            assertEquals(happyDueToDate, taskDAO.getDueToDate());
-            assertFalse(taskDAO.getIsCompleted());
+            assertNotNull(task);
+            assertNotNull(task.getId());
+            assertEquals(happyTitle, task.getTitle());
+            assertEquals(happyDescription, task.getDescription());
+            assertEquals(happyHighPriority, task.getPriority());
+            assertEquals(happyDueToDate, task.getDueToDate());
+            assertFalse(task.getIsCompleted());
         });
     }
 
     @Test
     @DisplayName("Creates TaskDAO without priority being passed")
     void createTaskDAOWithoutPriority() {
-        TaskDAO taskDAO = new TaskDAO(happyTitle, happyDescription,
+        Task task = new Task(happyTitle, happyDescription,
                 happyDueToDate);
 
         assertAll(() -> {
-            assertNotNull(taskDAO);
-            assertNotNull(taskDAO.getId());
-            assertEquals(happyTitle, taskDAO.getTitle());
-            assertEquals(happyDescription, taskDAO.getDescription());
-            assertEquals(defaultPriority, taskDAO.getPriority());
-            assertEquals(happyDueToDate, taskDAO.getDueToDate());
-            assertFalse(taskDAO.getIsCompleted());
+            assertNotNull(task);
+            assertNotNull(task.getId());
+            assertEquals(happyTitle, task.getTitle());
+            assertEquals(happyDescription, task.getDescription());
+            assertEquals(defaultPriority, task.getPriority());
+            assertEquals(happyDueToDate, task.getDueToDate());
+            assertFalse(task.getIsCompleted());
         });
     }
 
     @Test
     @DisplayName("Throws IllegalArgumentException because of no title")
     void taskDAOWithoutTitleThrowsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> new TaskDAO(null,
+        assertThrows(IllegalArgumentException.class, () -> new Task(null,
                 happyDescription, happyHighPriority, happyDueToDate));
     }
 
     @Test
     @DisplayName("Throws IllegalArgumentException because of no description")
     void taskDAOWithoutDescriptionThrowsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> new TaskDAO(happyTitle,
+        assertThrows(IllegalArgumentException.class, () -> new Task(happyTitle,
                 null, defaultPriority, happyDueToDate));
     }
 
     @Test
     @DisplayName("Throws IllegalArgumentException because of setting due to date as now")
     void taskDAODueToDateNowThrowsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> new TaskDAO(happyTitle,
+        assertThrows(IllegalArgumentException.class, () -> new Task(happyTitle,
                 happyDescription, happyMediumPriority, LocalDate.now()));
     }
 
     @Test
     @DisplayName("Throws IllegalArgumentException because of setting due to date as past")
     void taskDAODueToDateBeforeThrowsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> new TaskDAO(happyTitle,
+        assertThrows(IllegalArgumentException.class, () -> new Task(happyTitle,
                 happyDescription, happyMediumPriority, LocalDate.of(2020, 2, 19)));
     }
 }

@@ -1,7 +1,6 @@
 package com.example.demo.application;
 
 import com.example.demo.domain.Priority;
-import com.example.demo.domain.Task;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.Assert;
@@ -10,7 +9,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class TaskDTO implements Task {
+public class TaskDTO {
     private String title;
     private String description;
     private Priority priority;

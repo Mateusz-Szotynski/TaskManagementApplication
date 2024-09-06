@@ -1,6 +1,6 @@
 package com.example.demo.application;
 
-import com.example.demo.domain.TaskDAO;
+import com.example.demo.domain.Task;
 import com.example.demo.domain.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,18 +13,18 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    private TaskDTO convertToDTO(TaskDAO taskDAO) {
+    private TaskDTO convertToDTO(Task task) {
         return new TaskDTO(
-                taskDAO.getTitle(),
-                taskDAO.getDescription(),
-                taskDAO.getPriority(),
-                taskDAO.getDueToDate(),
-                taskDAO.getIsCompleted()
+                task.getTitle(),
+                task.getDescription(),
+                task.getPriority(),
+                task.getDueToDate(),
+                task.getIsCompleted()
         );
     }
 
-    private TaskDAO convertToDAO(TaskDTO taskDTO) {
-        return new TaskDAO(
+    private Task convertToDAO(TaskDTO taskDTO) {
+        return new Task(
                 taskDTO.getTitle(),
                 taskDTO.getDescription(),
                 taskDTO.getPriority(),
