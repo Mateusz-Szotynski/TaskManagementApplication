@@ -2,8 +2,9 @@ package com.example.demo.application;
 
 import com.example.demo.domain.Task;
 import com.example.demo.domain.TaskRepository;
-import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TaskService {
@@ -14,6 +15,9 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
+    public List<Task> findTasksByTitle(String title) {
+        return taskRepository.findByTitle(title);
+    }
 
 
 }

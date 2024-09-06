@@ -4,19 +4,15 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +23,6 @@ public class TaskRepositoryTests {
 
     private final String happyTitle = "testTitle";
     private final String happyDescription = "testDescription";
-    private final Priority defaultPriority = Priority.LOW;
     private final Priority happyHighPriority = Priority.HIGH;
     private final Priority happyMediumPriority = Priority.MEDIUM;
     private final LocalDate happyDueToDate = LocalDate.now().plusDays(3);
@@ -118,8 +113,9 @@ public class TaskRepositoryTests {
             assertTrue(retrievedTasksList.stream().allMatch((e) -> e.getTitle().contains(happyTitle)));
         });
     }
+
     @Test
-    @DisplayName("Tests deleting Task from database")
+    @DisplayName("Delete Task from database by entity")
     void deleteTaskFromDbByEntity() {
         Task task = new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate);
         taskRepository.save(task);
