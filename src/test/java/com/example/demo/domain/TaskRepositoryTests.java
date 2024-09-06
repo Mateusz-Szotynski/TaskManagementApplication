@@ -1,8 +1,6 @@
 package com.example.demo.domain;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,6 +14,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,6 +44,11 @@ public class TaskRepositoryTests {
         postgres.start();
     }
 
+    @AfterEach
+    void clear() {
+        taskRepository.deleteAll();
+    }
+
     @AfterAll
     static void close() {
         postgres.stop();
@@ -59,6 +64,7 @@ public class TaskRepositoryTests {
     }
 
     @Test
+    @DisplayName("Tests if database is created, running and app is conncected")
     void testDatabaseConnection() throws Exception {
         var connection = postgres.createConnection("");
         assertAll(() -> {
@@ -69,6 +75,7 @@ public class TaskRepositoryTests {
     }
 
     @Test
+    @DisplayName("Tests if table 'task' is created")
     void testTableExists() {
         try (var connection = postgres.createConnection("")) {
             var resultSet = connection.createStatement().executeQuery("SELECT * FROM task LIMIT 1;");
@@ -79,6 +86,7 @@ public class TaskRepositoryTests {
     }
 
     @Test
+    @DisplayName("Tests saving Task to database")
     void saveTaskToDb() {
         Task task = new Task(happyTitle, happyDescription, happyDueToDate);
         taskRepository.save(task);
@@ -91,6 +99,37 @@ public class TaskRepositoryTests {
             assertEquals(happyDescription, taskFromDb.getDescription());
             assertEquals(happyDueToDate, taskFromDb.getDueToDate());
             assertFalse(taskFromDb.getIsCompleted());
+        });
+    }
+
+    @Test
+    @DisplayName("Retrieve tasks by title")
+    void retrieveTasksByTitle() {
+        List<Task> taskList = List.of(new Task(happyTitle, happyDescription, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyHighPriority, happyDueToDate),
+                new Task("title", happyDescription, happyMediumPriority, happyDueToDate));
+        taskRepository.saveAll(taskList);
+
+        List<Task> retrievedTasksList = taskRepository.findByTitle(happyTitle);
+
+        assertAll(() -> {
+            assertFalse(retrievedTasksList.isEmpty());
+            assertEquals(2, retrievedTasksList.size());
+            assertTrue(retrievedTasksList.stream().allMatch((e) -> e.getTitle().contains(happyTitle)));
+        });
+    }
+    @Test
+    @DisplayName("Tests deleting Task from database")
+    void deleteTaskFromDbByEntity() {
+        Task task = new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate);
+        taskRepository.save(task);
+
+        taskRepository.delete(task);
+        List<Task> byTitle = taskRepository.findByTitle(happyTitle);
+
+        assertAll(() -> {
+            assertTrue(byTitle.isEmpty());
+            assertThrows(NoSuchElementException.class, () -> taskRepository.findByTitle(happyTitle).getFirst());
         });
     }
 }
