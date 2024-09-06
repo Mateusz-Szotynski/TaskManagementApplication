@@ -128,4 +128,23 @@ public class TaskRepositoryTests {
             assertThrows(NoSuchElementException.class, () -> taskRepository.findByTitle(happyTitle).getFirst());
         });
     }
+
+    @Test
+    @DisplayName("Retrieve task list with particular priority")
+    void retrieveTasksByPriority() {
+        List<Task> taskList = List.of(new Task(happyTitle, happyDescription, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyHighPriority, happyDueToDate),
+                new Task("title", happyDescription, happyMediumPriority, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyDueToDate));
+
+        taskRepository.saveAll(taskList);
+
+        List<Task> tasksFromDb = taskRepository.findByPriority(Priority.LOW);
+
+        assertAll(() -> {
+            assertFalse(tasksFromDb.isEmpty());
+            assertEquals(2, tasksFromDb.size());
+            assertTrue(tasksFromDb.stream().allMatch((e) -> e.getPriority().equals(Priority.LOW)));
+        });
+    }
 }
