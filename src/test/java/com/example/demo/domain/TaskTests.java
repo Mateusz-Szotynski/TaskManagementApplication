@@ -4,6 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 
@@ -23,7 +25,15 @@ public class TaskTests {
     *   - throws exception when no datetime is provided
     *   - throws exception when datetime is now
     *   - throws exception when datetime is past
-    * */
+    *   - throws exception when trying to set title to null
+    *   - changes the title with proper value
+    *   - throws exception when trying to set description to null
+    *   - changes the description with proper value
+    *   - throws exception when trying to set dueToDate to null
+    *   - changes the dueToDate with proper, future date
+    *   - throws exception when trying to set dueToDate to now / past
+    *
+    */
 
     private final String happyTitle = "testTitle";
     private final String happyDescription = "testDescription";

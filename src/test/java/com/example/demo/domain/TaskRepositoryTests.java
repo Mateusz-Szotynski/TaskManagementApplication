@@ -21,6 +21,20 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class TaskRepositoryTests {
 
+    /*
+     * Tests behaviour of TaskRepository.class
+     * Checks all possible scenarios of saving, retrieving and deleting objects with postgresql
+     * That includes:
+     *   - checks whether container with database is up and running
+     *   - saves valid Task to database
+     *   - retrieves task with particular title from database
+     *   - retrieves empty list with particular title from database (no exception)
+     *   - deletes Task from database based by entity
+     *   - retrieves task with particular priority from database
+     *   - retrieves empty list with particular priority from database (no exception)
+     *
+     */
+
     private final String happyTitle = "testTitle";
     private final String happyDescription = "testDescription";
     private final Priority happyHighPriority = Priority.HIGH;
