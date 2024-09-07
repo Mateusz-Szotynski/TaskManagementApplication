@@ -2,6 +2,8 @@ package com.example.demo.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.time.LocalDate;
 
@@ -10,17 +12,29 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TaskTests {
 
+    /*
+    * Tests behaviour of Task.class
+    * Checks all possible scenarios of creating and updating object.
+    * That includes:
+    *   - creates Task with all parameters
+    *   - creates Task without priority (default is being used by constructor)
+    *   - throws exception when no title is provided
+    *   - throws exception when no description is provided
+    *   - throws exception when no datetime is provided
+    *   - throws exception when datetime is now
+    *   - throws exception when datetime is past
+    * */
+
     private final String happyTitle = "testTitle";
     private final String happyDescription = "testDescription";
     private final Priority defaultPriority = Priority.LOW;
-    private final Priority happyHighPriority = Priority.HIGH;
-    private final Priority happyMediumPriority = Priority.MEDIUM;
     private final LocalDate happyDueToDate = LocalDate.now().plusDays(3);
 
-    @Test
     @DisplayName("Creates TaskDAO with all parameters")
-    void createTaskDAOWithAllParameters() {
-        Task task = new Task(happyTitle, happyDescription, happyHighPriority,
+    @ParameterizedTest
+    @EnumSource(Priority.class)
+    void createTaskDAOWithAllParameters(Priority priority) {
+        Task task = new Task(happyTitle, happyDescription, priority,
                 happyDueToDate);
 
         assertAll(() -> {
@@ -28,7 +42,7 @@ public class TaskTests {
             assertNull(task.getId());
             assertEquals(happyTitle, task.getTitle());
             assertEquals(happyDescription, task.getDescription());
-            assertEquals(happyHighPriority, task.getPriority());
+            assertEquals(priority, task.getPriority());
             assertEquals(happyDueToDate, task.getDueToDate());
             assertFalse(task.getIsCompleted());
         });
@@ -55,7 +69,7 @@ public class TaskTests {
     @DisplayName("Throws IllegalArgumentException because of no title")
     void taskDAOWithoutTitleThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> new Task(null,
-                happyDescription, happyHighPriority, happyDueToDate));
+                happyDescription, defaultPriority, happyDueToDate));
     }
 
     @Test
@@ -66,16 +80,31 @@ public class TaskTests {
     }
 
     @Test
-    @DisplayName("Throws IllegalArgumentException because of setting due to date as now")
-    void taskDAODueToDateNowThrowsIllegalArgumentException() {
+    @DisplayName("Throws IllegalArgumentException because of no date")
+    void taskDAODueToNoDateThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> new Task(happyTitle,
-                happyDescription, happyMediumPriority, LocalDate.now()));
+                happyDescription, defaultPriority, null));
     }
 
     @Test
-    @DisplayName("Throws IllegalArgumentException because of setting due to date as past")
+    @DisplayName("Throws IllegalArgumentException because of due to date as now")
+    void taskDAODueToDateNowThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> new Task(happyTitle,
+                happyDescription, defaultPriority, LocalDate.now()));
+    }
+
+    @Test
+    @DisplayName("Throws IllegalArgumentException because of due to date as past")
     void taskDAODueToDateBeforeThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> new Task(happyTitle,
-                happyDescription, happyMediumPriority, LocalDate.of(2020, 2, 19)));
+                happyDescription, defaultPriority, LocalDate.of(2020, 2, 19)));
+    }
+
+    @Test
+    @DisplayName("Throws IllegalArgumentException because of trying to set title as null")
+    void taskDAOSetTitleToNull() {
+        Task task = new Task(happyTitle, happyDescription, happyDueToDate);
+
+        assertThrows(IllegalArgumentException.class, () -> task.setTitle(null));
     }
 }

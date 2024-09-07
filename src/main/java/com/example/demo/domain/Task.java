@@ -12,16 +12,17 @@ import java.util.UUID;
 
 @Table("task")
 @Getter
-@Setter
 public class Task {
 
     @Id
     private Long id;
     private String title;
     private String description;
+    @Setter
     @Column("priority")
     private Priority priority;
     private LocalDate dueToDate;
+    @Setter
     private Boolean isCompleted;
 
     /*
@@ -48,5 +49,20 @@ public class Task {
     }
 
     public Task() {
+    }
+
+    public void setTitle(String title) {
+        Assert.notNull(title, "Task title cannot be null");
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        Assert.notNull(description, "Task description cannot be null");
+    }
+
+    public void setDueToDate(LocalDate dueToDate) {
+        Assert.notNull(dueToDate, "Due To date cannot be null");
+        Assert.isTrue(dueToDate.isAfter(LocalDate.now()), "Due To date cannot be before now");
+        this.dueToDate = dueToDate;
     }
 }
