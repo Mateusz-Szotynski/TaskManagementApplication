@@ -1,5 +1,6 @@
 package com.example.demo.application;
 
+import com.example.demo.domain.Priority;
 import com.example.demo.domain.Task;
 import com.example.demo.domain.TaskRepository;
 import com.example.demo.domain.exceptions.TaskNotFoundException;
@@ -20,6 +21,14 @@ public class TaskService {
         List<Task> taskList = taskRepository.findByTitle(title);
         if (taskList.isEmpty()) {
             throw new TaskNotFoundException("There are no tasks with: " + title + " title");
+        }
+        return taskList;
+    }
+
+    public List<Task> findTasksByPriority(Priority priority) {
+        List<Task> taskList = taskRepository.findByPriority(priority);
+        if (taskList.isEmpty()) {
+            throw new TaskNotFoundException("There are no tasks with: " + priority + " priority");
         }
         return taskList;
     }
