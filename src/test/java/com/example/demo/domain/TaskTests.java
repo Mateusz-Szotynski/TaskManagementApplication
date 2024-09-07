@@ -112,6 +112,21 @@ public class TaskTests {
     }
 
     @Test
+    @DisplayName("Sets title to different value")
+    void taskDAOSetTitle() {
+        Task task = new Task(happyTitle, happyDescription, happyDueToDate);
+
+        String differentTitle = "differentTitle";
+        task.setTitle(differentTitle);
+
+        assertAll(() -> {
+            assertNotNull(task.getTitle());
+            assertEquals(differentTitle, task.getTitle());
+        });
+
+    }
+
+    @Test
     @DisplayName("Throws IllegalArgumentException because of trying to set description as null")
     void TaskDAOSetDescriptionToNull() {
         Task task = new Task(happyTitle, happyDescription, happyDueToDate);
@@ -124,6 +139,20 @@ public class TaskTests {
     }
 
     @Test
+    @DisplayName("Sets description to different value")
+    void TaskDAOSetDescription() {
+        Task task = new Task(happyTitle, happyDescription, happyDueToDate);
+
+        String differentDescription = "differentDescription";
+        task.setDescription(differentDescription);
+
+        assertAll(() -> {
+            assertNotNull(task.getDescription());
+            assertEquals(differentDescription, task.getDescription());
+        });
+    }
+
+    @Test
     @DisplayName("Throws IllegalArgumentException because of trying to set dueToDate as null")
     void TaskDAOSetDueToDateToNull() {
         Task task = new Task(happyTitle, happyDescription, happyDueToDate);
@@ -131,6 +160,20 @@ public class TaskTests {
         assertAll(() -> {
             assertThrows(IllegalArgumentException.class, () -> task.setDueToDate(null));
             assertEquals(happyDueToDate, task.getDueToDate());
+        });
+    }
+
+    @Test
+    @DisplayName("Sets different valid dueToDate")
+    void TaskDAOSetDueToDate() {
+        Task task = new Task(happyTitle, happyDescription, happyDueToDate);
+
+        LocalDate differentDate = LocalDate.now().plusDays(3);
+        task.setDueToDate(differentDate);
+
+        assertAll(() -> {
+            assertNotNull(task.getDueToDate());
+            assertEquals(differentDate, task.getDueToDate());
         });
     }
 

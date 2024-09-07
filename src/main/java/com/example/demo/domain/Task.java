@@ -58,6 +58,7 @@ public class Task {
 
     public void setDescription(String description) {
         Assert.notNull(description, "Task description cannot be null");
+        this.description = description;
     }
 
     public void setDueToDate(LocalDate dueToDate) {
