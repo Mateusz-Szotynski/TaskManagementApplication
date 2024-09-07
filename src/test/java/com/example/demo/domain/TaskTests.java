@@ -105,6 +105,44 @@ public class TaskTests {
     void taskDAOSetTitleToNull() {
         Task task = new Task(happyTitle, happyDescription, happyDueToDate);
 
-        assertThrows(IllegalArgumentException.class, () -> task.setTitle(null));
+        assertAll(() -> {
+            assertThrows(IllegalArgumentException.class, () -> task.setTitle(null));
+            assertEquals(happyTitle, task.getTitle());
+        });
+    }
+
+    @Test
+    @DisplayName("Throws IllegalArgumentException because of trying to set description as null")
+    void TaskDAOSetDescriptionToNull() {
+        Task task = new Task(happyTitle, happyDescription, happyDueToDate);
+
+        assertAll(() -> {
+            assertThrows(IllegalArgumentException.class, () -> task.setDescription(null));
+            assertEquals(happyDescription, task.getDescription());
+        });
+
+    }
+
+    @Test
+    @DisplayName("Throws IllegalArgumentException because of trying to set dueToDate as null")
+    void TaskDAOSetDueToDateToNull() {
+        Task task = new Task(happyTitle, happyDescription, happyDueToDate);
+
+        assertAll(() -> {
+            assertThrows(IllegalArgumentException.class, () -> task.setDueToDate(null));
+            assertEquals(happyDueToDate, task.getDueToDate());
+        });
+    }
+
+    @Test
+    @DisplayName("Throws IllegalArgumentException because of trying to set dueToDate to past and to now")
+    void TaskDAOSetDueToDateToPastAndNow() {
+        Task task = new Task(happyTitle, happyDescription, happyDueToDate);
+
+        assertAll(() -> {
+            assertThrows(IllegalArgumentException.class, () -> task.setDueToDate(LocalDate.now().minusDays(1)));
+            assertThrows(IllegalArgumentException.class, () -> task.setDueToDate(LocalDate.now()));
+            assertEquals(happyDueToDate, task.getDueToDate());
+        });
     }
 }
