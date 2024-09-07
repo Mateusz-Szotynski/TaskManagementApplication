@@ -47,6 +47,7 @@ public class TaskService {
             throw new TaskNotFoundException("There are no tasks with: " + title + " title and " + priority
             + " priority");
         }
+        return taskList;
     }
 
 
