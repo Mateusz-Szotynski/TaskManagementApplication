@@ -14,14 +14,23 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.assertArg;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
 @Testcontainers
 @ExtendWith(MockitoExtension.class)
 public class TaskServiceTests {
+
+    /*
+     * Tests behaviour of TaskService.class
+     * Checks all possible scenarios of responses
+     * That includes:
+     *   - finds and returns found tasks by title
+     *   - throws exception because of no task with provided title
+     *   - finds and returns found tasks by Priority
+     *   - throws exception because of no task with provided priority
+     *
+     */
 
     private final String happyTitle = "testTitle";
     private final String happyDescription = "testDescription";
