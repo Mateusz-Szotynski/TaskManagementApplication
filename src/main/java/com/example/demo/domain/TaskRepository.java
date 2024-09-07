@@ -9,4 +9,5 @@ import java.util.List;
 public interface TaskRepository extends ListCrudRepository<Task, Long> {
     List<Task> findByTitle(String title);
     List<Task> findByPriority(Priority priority);
+    List<Task> findByTitleAndPriority(String title, Priority priority);
 }

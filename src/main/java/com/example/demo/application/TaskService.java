@@ -33,5 +33,21 @@ public class TaskService {
         return taskList;
     }
 
+    public List<Task> findAllTasks() {
+        List<Task> taskList = taskRepository.findAll();
+        if (taskList.isEmpty()) {
+            throw new TaskNotFoundException("There are no tasks at all");
+        }
+        return taskList;
+    }
+
+    public List<Task> findTasksByTitleAndPriority(String title, Priority priority) {
+        List<Task> taskList = taskRepository.findByTitleAndPriority(title, priority);
+        if (taskList.isEmpty()) {
+            throw new TaskNotFoundException("There are no tasks with: " + title + " title and " + priority
+            + " priority");
+        }
+    }
+
 
 }
