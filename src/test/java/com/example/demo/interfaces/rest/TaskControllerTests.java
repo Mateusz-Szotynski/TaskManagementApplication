@@ -1,7 +1,8 @@
-package com.example.demo.domain;
+package com.example.demo.interfaces.rest;
 
 import com.example.demo.application.TaskService;
-import com.example.demo.interfaces.rest.TaskController;
+import com.example.demo.domain.Priority;
+import com.example.demo.domain.Task;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -103,6 +104,21 @@ public class TaskControllerTests {
             assertTrue(taskListFromDb.getBody().stream().allMatch(e -> e.getTitle().equalsIgnoreCase(happyTitle) &&
                     e.getPriority().equals(happyHighPriority)));
             assertEquals(2, taskListFromDb.getBody().size());
+        });
+    }
+
+    @Test
+    @DisplayName("Saves Task to database")
+    void saveTaskToDatabase() {
+        Task task = new Task(happyTitle, happyDescription, happyDueToDate);
+        when(taskService.saveTask(task)).thenReturn(task);
+
+        ResponseEntity<Task> savedTask = taskController.createTask(task);
+
+        assertAll(() -> {
+            assertNotNull(savedTask);
+            assertEquals(HttpStatus.OK, savedTask.getStatusCode());
+            assertEquals(task, savedTask.getBody());
         });
     }
 }

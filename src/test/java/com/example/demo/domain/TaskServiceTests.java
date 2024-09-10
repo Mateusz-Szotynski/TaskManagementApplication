@@ -2,12 +2,18 @@ package com.example.demo.domain;
 
 import com.example.demo.application.TaskService;
 import com.example.demo.domain.exceptions.TaskNotFoundException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
@@ -37,6 +43,19 @@ public class TaskServiceTests {
     private final Priority happyHighPriority = Priority.HIGH;
     private final Priority happyMediumPriority = Priority.MEDIUM;
     private final LocalDate happyDueToDate = LocalDate.now().plusDays(3);
+
+    @Container
+    static GenericContainer debian = new GenericContainer("debian:latest");
+
+    @BeforeAll
+    static void startUp() {
+        debian.start();
+    }
+
+    @AfterAll
+    static void shutDown() {
+        debian.close();
+    }
 
     @Mock
     private TaskRepository taskRepository;
@@ -153,6 +172,20 @@ public class TaskServiceTests {
         assertAll(() -> {
             assertTrue(taskRepository.findByTitleAndPriority(happyTitle, happyMediumPriority).isEmpty());
             assertThrows(TaskNotFoundException.class, () -> taskService.findTasksByTitleAndPriority(happyTitle, happyMediumPriority));
+        });
+    }
+
+    @ParameterizedTest
+    @DisplayName("Saves Task to database")
+    @EnumSource(Priority.class)
+    void savesTaskToDatabase(Priority priority) {
+        Task task = new Task(happyTitle, happyDescription, priority, happyDueToDate);
+        when(taskRepository.save(task)).thenReturn(task);
+
+        Task savedTask = taskService.saveTask(task);
+
+        assertAll(() -> {
+            assertNotNull(savedTask);
         });
     }
 }
