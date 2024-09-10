@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@Testcontainers
 @ExtendWith(MockitoExtension.class)
 public class TaskControllerTests {
 
@@ -35,21 +33,76 @@ public class TaskControllerTests {
     private TaskController taskController;
 
     @Test
-    @DisplayName("Returns all tasks with particular title")
-    void findTasksByTitle() {
+    @DisplayName("finds and returns all task")
+    void findTasksWithoutParams() {
+        when(taskService.findAllTasks()).thenReturn(List.of(
+                new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyDueToDate)
+        ));
+
+        ResponseEntity<List<Task>> response = taskController.findTasks(null, null);
+
+        assertAll(() -> {
+                assertNotNull(response.getBody());
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                assertEquals(taskService.findAllTasks(), response.getBody());
+                assertEquals(2, response.getBody().size());
+        });
+    }
+
+    @Test
+    @DisplayName("Finds and returns tasks with provided priority")
+    void findTasksWithPriorityParam() {
+        when(taskService.findTasksByPriority(happyMediumPriority)).thenReturn(List.of(
+                new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate)
+        ));
+
+        ResponseEntity<List<Task>> taskListFromDb = taskController.findTasks(null, happyMediumPriority);
+
+        assertAll(() -> {
+            assertNotNull(taskListFromDb.getBody());
+            assertEquals(HttpStatus.OK, taskListFromDb.getStatusCode());
+            assertEquals(2, taskListFromDb.getBody().size());
+            assertTrue(taskListFromDb.getBody().stream().allMatch((e) -> e.getPriority().equals(happyMediumPriority)));
+        });
+    }
+
+    @Test
+    @DisplayName("Finds and returns task list with provided title")
+    void findTasksWithTitleParam() {
         when(taskService.findTasksByTitle(happyTitle)).thenReturn(List.of(
-                new Task(happyTitle, happyDescription, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyHighPriority, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyDueToDate)
+        ));
+
+        ResponseEntity<List<Task>> taskListFromDb = taskController.findTasks(happyTitle, null);
+
+        assertAll(() -> {
+            assertNotNull(taskListFromDb.getBody());
+            assertEquals(HttpStatus.OK, taskListFromDb.getStatusCode());
+            assertEquals(3, taskListFromDb.getBody().size());
+            assertTrue(taskListFromDb.getBody().stream().allMatch((e) -> e.getTitle().equalsIgnoreCase(happyTitle)));
+        });
+    }
+
+    @Test
+    @DisplayName("Find and returns task list with provided title and priority")
+    void findTasksWithTitleAndPriorityParam() {
+        when(taskService.findTasksByTitleAndPriority(happyTitle, happyHighPriority)).thenReturn(List.of(
+                new Task(happyTitle, happyDescription, happyHighPriority, happyDueToDate),
                 new Task(happyTitle, happyDescription, happyHighPriority, happyDueToDate)
         ));
 
-        ResponseEntity<List<Task>> taskList = taskController.findTasksByTitle(happyTitle);
+        ResponseEntity<List<Task>> taskListFromDb = taskController.findTasks(happyTitle, happyHighPriority);
 
         assertAll(() -> {
-            assertFalse(taskList.getBody().isEmpty());
-            assertEquals(HttpStatus.OK, taskList.getStatusCode());
-            assertEquals(2, taskList.getBody().size());
-            assertTrue(taskList.getBody().stream().allMatch((e) -> e.getTitle().contentEquals(happyTitle)));
+            assertNotNull(taskListFromDb.getBody());
+            assertEquals(HttpStatus.OK, taskListFromDb.getStatusCode());
+            assertTrue(taskListFromDb.getBody().stream().allMatch(e -> e.getTitle().equalsIgnoreCase(happyTitle) &&
+                    e.getPriority().equals(happyHighPriority)));
+            assertEquals(2, taskListFromDb.getBody().size());
         });
-
     }
 }

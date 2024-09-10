@@ -63,17 +63,18 @@ public class TaskRepositoryTests {
         postgres.stop();
     }
 
+
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url",postgres::getJdbcUrl);
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.sql.init.mode", () -> "always" );
+        registry.add("spring.sql.init.mode", () -> "always");
         registry.add("testcontainers.reuse.enable", () -> "false");
     }
 
     @Test
-    @DisplayName("Tests if database is created, running and app is conncected")
+    @DisplayName("Tests if database is created, running and app is connected")
     void testDatabaseConnection() throws Exception {
         var connection = postgres.createConnection("");
         assertAll(() -> {
@@ -97,14 +98,15 @@ public class TaskRepositoryTests {
     @Test
     @DisplayName("Saves Task to database")
     void saveTaskToDb() {
-        Task task = new Task(happyTitle, happyDescription, happyDueToDate);
+        String distinctTitle = "savedTaskToDb";
+        Task task = new Task(distinctTitle, happyDescription, happyDueToDate);
         taskRepository.save(task);
 
-        Task taskFromDb = taskRepository.findAll().getFirst();
+        Task taskFromDb = taskRepository.findByTitle(distinctTitle).getFirst();
 
         assertAll(() -> {
             assertNotNull(taskFromDb);
-            assertEquals(happyTitle, taskFromDb.getTitle());
+            assertEquals(distinctTitle, taskFromDb.getTitle());
             assertEquals(happyDescription, taskFromDb.getDescription());
             assertEquals(happyDueToDate, taskFromDb.getDueToDate());
             assertFalse(taskFromDb.getIsCompleted());
@@ -134,10 +136,7 @@ public class TaskRepositoryTests {
 
         List<Task> tasksDb = taskRepository.findByTitle("title2");
 
-        assertAll(() -> {
-            assertTrue(tasksDb.isEmpty());
-            assertEquals(0, tasksDb.size());
-        });
+        assertTrue(tasksDb.isEmpty());
     }
 
     @Test
@@ -180,9 +179,41 @@ public class TaskRepositoryTests {
 
         List<Task> taskFromDb = taskRepository.findByPriority(Priority.CRITICAL);
 
+        assertTrue(taskFromDb.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Returns list of tasks with provided title and priority")
+    void retrieveTasksByTitleAndPriority() {
+        List<Task> taskList = List.of(new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate),
+                new Task("title", happyDescription, happyMediumPriority, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyHighPriority, happyDueToDate));
+
+        taskRepository.saveAll(taskList);
+
+        List<Task> taskFromDb = taskRepository.findByTitleAndPriority(happyTitle, happyMediumPriority);
+
         assertAll(() -> {
-            assertTrue(taskFromDb.isEmpty());
-            assertEquals(0, taskFromDb.size());
+            assertFalse(taskFromDb.isEmpty());
+            assertEquals(2, taskFromDb.size());
+            assertTrue(taskFromDb.stream().allMatch((e) -> e.getTitle().equalsIgnoreCase(happyTitle) &&
+                    e.getPriority().equals(happyMediumPriority)));
         });
+    }
+
+    @Test
+    @DisplayName("Returns empty list of tasks with provided title and priority")
+    void retrieveEmptyListTasksByTitleAndPriority() {
+        List<Task> taskList = List.of(new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate),
+                new Task("title", happyDescription, happyMediumPriority, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyHighPriority, happyDueToDate));
+
+        taskRepository.saveAll(taskList);
+
+        List<Task> tasksFromDb = taskRepository.findByTitleAndPriority(happyTitle, Priority.CRITICAL);
+
+        assertTrue(tasksFromDb.isEmpty());
     }
 }

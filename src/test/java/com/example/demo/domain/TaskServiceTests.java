@@ -92,4 +92,30 @@ public class TaskServiceTests {
 
         assertThrows(TaskNotFoundException.class, () -> taskService.findTasksByPriority(happyMediumPriority));
     }
+
+    @Test
+    @DisplayName("Finds task list with provided title and priority")
+    void returnTaskByTitleAndPriority() {
+        when(taskRepository.findByTitleAndPriority(happyTitle, happyMediumPriority)).thenReturn(List.of(
+                new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate),
+                new Task(happyTitle, happyDescription, happyMediumPriority, happyDueToDate)
+        ));
+
+        List<Task> tasksFromDb = taskService.findTasksByTitleAndPriority(happyTitle, happyMediumPriority);
+
+        assertAll(() -> {
+            assertFalse(tasksFromDb.isEmpty());
+            assertEquals(2, tasksFromDb.size());
+            assertTrue(tasksFromDb.stream().allMatch((e) -> e.getTitle().equalsIgnoreCase(happyTitle) &&
+                    e.getPriority().equals(happyMediumPriority)));
+        });
+    }
+
+    @Test
+    @DisplayName("Couldnt find a tasks with provided title and priority. Throws exception")
+    void noTaskWithTitleAndPriorityAvailable() {
+        when(taskRepository.findByTitleAndPriority(happyTitle, happyMediumPriority)).thenThrow(TaskNotFoundException.class);
+
+        assertThrows(TaskNotFoundException.class, () -> taskService.findTasksByTitleAndPriority(happyTitle, happyMediumPriority));
+    }
 }
