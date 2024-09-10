@@ -1,4 +1,3 @@
 List of things to do:
-    - write tests for controller layer
     - add ability to create, delete, save tasks via controller -> service -> repository
     - write tests for ability to create, delete, save tasks for controller layer (service and repo are done)

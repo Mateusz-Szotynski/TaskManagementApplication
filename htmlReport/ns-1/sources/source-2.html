@@ -56,10 +56,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    33.3%
   </span>
   <span class="absValue">
-    (6/6)
+    (2/6)
   </span>
 </td>
 <td class="coverageStat">
@@ -72,10 +72,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    57.9%
   </span>
   <span class="absValue">
-    (19/19)
+    (11/19)
   </span>
 </td>
 </tr>
@@ -137,23 +137,23 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        this(title, description, null, dueToDate);</b>
 &nbsp;    }
 &nbsp;
-<b class="fc">&nbsp;    public Task() {</b>
+<b class="nc">&nbsp;    public Task() {</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setTitle(String title) {
-<b class="fc">&nbsp;        Assert.notNull(title, &quot;Task title cannot be null&quot;);</b>
-<b class="fc">&nbsp;        this.title = title;</b>
+<b class="nc">&nbsp;        Assert.notNull(title, &quot;Task title cannot be null&quot;);</b>
+<b class="nc">&nbsp;        this.title = title;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setDescription(String description) {
-<b class="fc">&nbsp;        Assert.notNull(description, &quot;Task description cannot be null&quot;);</b>
-<b class="fc">&nbsp;        this.description = description;</b>
+<b class="nc">&nbsp;        Assert.notNull(description, &quot;Task description cannot be null&quot;);</b>
+<b class="nc">&nbsp;        this.description = description;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setDueToDate(LocalDate dueToDate) {
-<b class="fc">&nbsp;        Assert.notNull(dueToDate, &quot;Due To date cannot be null&quot;);</b>
-<b class="fc">&nbsp;        Assert.isTrue(dueToDate.isAfter(LocalDate.now()), &quot;Due To date cannot be before now&quot;);</b>
-<b class="fc">&nbsp;        this.dueToDate = dueToDate;</b>
+<b class="nc">&nbsp;        Assert.notNull(dueToDate, &quot;Due To date cannot be null&quot;);</b>
+<b class="nc">&nbsp;        Assert.isTrue(dueToDate.isAfter(LocalDate.now()), &quot;Due To date cannot be before now&quot;);</b>
+<b class="nc">&nbsp;        this.dueToDate = dueToDate;</b>
 &nbsp;    }
 &nbsp;}
 </code>
@@ -179,7 +179,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-09-10 11:38</div>
+    <div style="float:right;">generated on 2024-09-10 11:28</div>
 </div>
 </body>
 </html>
